@@ -20,7 +20,7 @@ router.post('/register', async (req, res, next) => {
     return res.status(422).send({ message: error.details[0].message });
   }
 
-  const { email, password, name, username } = req.body;
+  const { email, password, username } = req.body;
 
   try {
     const existingUser = await User.findOne({ email });
@@ -35,11 +35,10 @@ router.post('/register', async (req, res, next) => {
         email,
         password,
         username,
-        name,
-        avatar: faker.image.avatar(),
       });
 
       newUser.registerUser(newUser, (err, user) => {
+        
         if (err) throw err;
         res.json({ message: 'Register success.' }); // just redirect to login
       });

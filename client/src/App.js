@@ -11,6 +11,7 @@ import Profile from './pages/Profile/Profile';
 import Users from './pages/Users/Users';
 import Admin from './pages/Admin/Admin';
 import NotFound from './pages/NotFound/NotFound';
+import Planets from './pages/Planets/Planets'
 
 import Loader from './components/Loader/Loader';
 
@@ -47,6 +48,7 @@ const App = ({ logInUserWithOauth, auth, loadMe }) => {
           <Route path="/users" component={Users} />
           <Route path="/notfound" component={NotFound} />
           <Route path="/admin" component={Admin} />
+          <Route path="/planets" component={Planets} />
           <Route exact path="/:username" component={Profile} />
           <Route exact path="/" component={Home} />
           <Route component={NotFound} />

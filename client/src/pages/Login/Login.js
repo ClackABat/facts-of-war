@@ -6,13 +6,16 @@ import { useFormik } from 'formik';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 import _ from 'lodash';
+import { Box, Button, Card, CardActions, CardContent, CardHeader, Grid, TextField, withStyles } from '@material-ui/core';
 
 import { loginUserWithEmail } from '../../store/actions/authActions';
 import { FACEBOOK_AUTH_LINK, GOOGLE_AUTH_LINK } from '../../constants';
 import { loginSchema } from './validation';
-import './styles.css';
+import Layout from '../../layout/Layout';
+import styles from './styles'
 
-const Login = ({ auth, history, loginUserWithEmail }) => {
+
+const Login = ({ auth, history, loginUserWithEmail, classes }) => {
   const formik = useFormik({
     initialValues: {
       email: '',
@@ -27,72 +30,73 @@ const Login = ({ auth, history, loginUserWithEmail }) => {
   if (auth.isAuthenticated) return <Redirect to="/" />;
 
   return (
-    <div className="login">
-      <div className="container">
-        <h1>Log in page</h1>
-        <p>
-          back to{' '}
-          <Link className="bold" to="/">
-            Home page
-          </Link>
-        </p>
-        <form onSubmit={formik.handleSubmit}>
-          <h2>Log in with social media</h2>
-          <a className="fb btn" href={FACEBOOK_AUTH_LINK}>
-            <i className="fa fa-facebook fa-fw" /> Login with Facebook
-          </a>
-          <a className="google btn" href={GOOGLE_AUTH_LINK}>
-            <i className="fa fa-google fa-fw" />
-            Login with Google
-          </a>
-          <h2>Login with email address</h2>
-          <p className="logins">Admin: email0@email.com 123456789</p>
-          <p className="logins">User: email1@email.com 123456789</p>
-          <div>
-            <input
-              placeholder="Email address"
-              name="email"
-              className="text"
-              type="text"
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              value={formik.values.email}
-            />
-            {formik.touched.email && formik.errors.email ? (
-              <p className="error">{formik.errors.email}</p>
-            ) : null}
-            <input
-              placeholder="Password"
-              name="password"
-              type="password"
-              className="text"
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              value={formik.values.password}
-            />
-            {formik.touched.password && formik.errors.password ? (
-              <p className="error">{formik.errors.password}</p>
-            ) : null}
-          </div>
-          {auth.error && <p className="error">{auth.error}</p>}
-          <div>
-            <button
-              className="btn submit"
-              disabled={auth.isLoading || !formik.isValid}
-              type="submit"
-            >
-              Log in now
-            </button>
-          </div>
-          <div>
-            Don't have an account?{' '}
-            <Link className="bold" to="/register">
-              Register
-            </Link>
-          </div>
-        </form>
-      </div>
-    </div>
+    <Layout>
+      <Grid item xs={12}>
+        <Box display="flex" justifyContent="center" alignItems="center" height="100vh">
+
+          <Card>
+            <Box textAlign="center" m={2}>
+              <CardHeader title="Welcome, Executor" subheader="Please sign in to continue." titleTypographyProps={{ variant: 'h4'}}/>
+              <form onSubmit={formik.handleSubmit}>
+                <CardContent>
+                  <p className="logins">Admin: test@test.com test</p>
+                  <p className="logins">User: test1@test.com test</p>
+                  <div>
+                    <TextField
+                      id="email"
+                      name="email"
+                      label="Email"
+                      fullWidth
+                      autoFocus
+                      required
+                      value={formik.values.email}
+                      onChange={formik.handleChange}
+                      onBlur={formik.handleBlur}
+                      error={formik.touched.email && Boolean(formik.errors.email)}
+                      helperText={formik.touched.email && formik.errors.email}
+                    />
+
+                    <TextField
+                      id="password"
+                      name="password"
+                      label="Password"
+                      type="password"
+                      fullWidth
+                      required
+                      value={formik.values.password}
+                      onChange={formik.handleChange}
+                      onBlur={formik.handleBlur}
+                      error={formik.touched.password && Boolean(formik.errors.password)}
+                      helperText={formik.touched.password && formik.errors.password}
+                    />
+                  </div>
+                </CardContent>
+                <CardActions className={classes.cardActions}>
+                    {auth.error && <p className="error">{auth.error}</p>}
+                      <Button
+                        type="submit"
+                        color="primary"
+                        variant="contained"
+                        fullWidth
+                        disabled={auth.isLoading || !formik.isValid}
+                      >
+                        Login
+                      </Button>
+                    <div>
+                      Don't have an account?{' '}
+                      <Link className="bold" to="/register">
+                        Register
+                      </Link>
+                    </div>
+                </CardActions>
+
+              </form>
+            </Box>
+          </Card>
+
+        </Box>
+      </Grid>
+    </Layout>
   );
 };
 
@@ -101,4 +105,4 @@ const mapStateToProps = (state) => ({
   errors: state.errors,
 });
 
-export default compose(withRouter, connect(mapStateToProps, { loginUserWithEmail }))(Login);
+export default compose(withRouter, connect(mapStateToProps, { loginUserWithEmail }))(withStyles(styles)(Login));

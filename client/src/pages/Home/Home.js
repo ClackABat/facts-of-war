@@ -7,8 +7,10 @@ import Layout from '../../layout/Layout';
 import MessageList from '../../components/MessageList/MessageList';
 import MessageForm from '../../components/MessageForm/MessageForm';
 import { reseedDatabase } from '../../store/actions/authActions';
+import requireAuth from '../../hoc/requireAuth';
 
 import './styles.css';
+import { Box, Container } from '@material-ui/core';
 
 const ReseedMessage = ({ handleReseed }) => {
   return (
@@ -30,7 +32,8 @@ const Home = ({ auth, reseedDatabase }) => {
 
   return (
     <Layout>
-      <div className="home-page">
+      <Container >
+        <Box bgcolor="white">
         <h1>Home page</h1>
         {!auth.isAuthenticated ? (
           <div>
@@ -55,8 +58,8 @@ const Home = ({ auth, reseedDatabase }) => {
             <MessageForm />
           </>
         )}
-        <MessageList />
-      </div>
+        </Box>
+      </Container>
     </Layout>
   );
 };
@@ -65,4 +68,4 @@ const mapStateToProps = (state) => ({
   auth: state.auth,
 });
 
-export default compose(connect(mapStateToProps, { reseedDatabase }))(Home);
+export default compose(requireAuth, connect(mapStateToProps, { reseedDatabase }))(Home);

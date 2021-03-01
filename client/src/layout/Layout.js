@@ -1,16 +1,23 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { Grid } from '@material-ui/core';
 
-import Navbar from '../components/Navbar/Navbar';
+
+import Header from '../components/Header/Header';
 import Footer from '../components/Footer/Footer';
-import './styles.css';
+import Background from '../components/Background/Background';
+
 
 const Layout = ({ children }) => {
   return (
     <>
-      <Navbar />
-      <div className="container">{children}</div>
-      <Footer />
+      <Header />
+      <Background>
+        <Grid container>
+          {children}
+        </Grid>
+      </Background>
+      {/* <Footer /> */}
     </>
   );
 };

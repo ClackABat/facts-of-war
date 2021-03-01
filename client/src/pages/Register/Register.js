@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link, withRouter, Redirect } from 'react-router-dom';
+import { Box, Button, Card, CardActions, CardContent, CardHeader, Grid, TextField, withStyles } from '@material-ui/core';
 
 import { compose } from 'redux';
 import { connect } from 'react-redux';
@@ -9,15 +10,21 @@ import { useFormik } from 'formik';
 
 import { registerUserWithEmail } from '../../store/actions/registerActions';
 import { registerSchema } from './validation';
-import './styles.css';
+import Layout from '../../layout/Layout';
 
-const Register = ({ auth, register: { isLoading, error }, history, registerUserWithEmail }) => {
+const styles = theme => ({
+  cardActions: {
+    flexDirection: 'column'
+  }
+});
+
+
+const Register = ({ classes, auth, register: { isLoading, error }, history, registerUserWithEmail }) => {
   const formik = useFormik({
     initialValues: {
-      name: '',
-      username: '',
       email: '',
-      password: '',
+      username: '',
+      password: ''
     },
     validationSchema: registerSchema,
     onSubmit: (values) => {
@@ -28,82 +35,86 @@ const Register = ({ auth, register: { isLoading, error }, history, registerUserW
   if (auth.isAuthenticated) return <Redirect to="/" />;
 
   return (
-    <div className="register">
-      <div className="container">
-        <h1>Register page</h1>
-        <p>
-          back to{' '}
-          <Link className="bold" to="/">
-            Home page
-          </Link>
-        </p>
-        <form onSubmit={formik.handleSubmit} noValidate>
-          <h2>Create new account</h2>
-          <div>
-            <input
-              placeholder="Name"
-              name="name"
-              className=""
-              type="text"
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              value={formik.values.name}
-            />
-            {formik.touched.name && formik.errors.name ? (
-              <p className="error">{formik.errors.name}</p>
-            ) : null}
-            <input
-              placeholder="Username"
-              name="username"
-              className=""
-              type="text"
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              value={formik.values.username}
-            />
-            {formik.touched.username && formik.errors.username ? (
-              <p className="error">{formik.errors.username}</p>
-            ) : null}
-            <input
-              placeholder="Email address"
-              name="email"
-              className=""
-              type="text"
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              value={formik.values.email}
-            />
-            {formik.touched.email && formik.errors.email ? (
-              <p className="error">{formik.errors.email}</p>
-            ) : null}
-            <input
-              placeholder="Password"
-              name="password"
-              className=""
-              type="password"
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              value={formik.values.password}
-            />
-            {formik.touched.password && formik.errors.password ? (
-              <p className="error">{formik.errors.password}</p>
-            ) : null}
-          </div>
-          {error && <p className="error">{error}</p>}
-          <div>
-            <button className="btn submit" type="submit" disabled={isLoading || !formik.isValid}>
-              Sign up now
-            </button>
-          </div>
-          <div>
-            Have an account?{' '}
-            <Link className="bold" to="/login">
-              Log In
-            </Link>
-          </div>
-        </form>
-      </div>
-    </div>
+    <Layout>
+      <Grid item xs={12}>
+        <Box display="flex" justifyContent="center" alignItems="center" height="100vh">
+        <Card>
+            <Box textAlign="center" m={2}>
+              <form onSubmit={formik.handleSubmit} noValidate>
+                <CardHeader title="Create a new account" titleTypographyProps={{ variant: 'h4'}}/>
+                <CardContent>
+                  <p>
+                    back to{' '}
+                    <Link className="bold" to="/">
+                      Home page
+                    </Link>
+                  </p>
+                  
+                    <TextField
+                      id="email"
+                      name="email"
+                      label="Email"
+                      fullWidth
+                      required
+                      value={formik.values.email}
+                      onChange={formik.handleChange}
+                      onBlur={formik.handleBlur}
+                      error={formik.touched.email && Boolean(formik.errors.email)}
+                      helperText={formik.touched.email && formik.errors.email}
+                    />
+
+                    <TextField
+                      id="username"
+                      name="username"
+                      label="Username"
+                      fullWidth
+                      required
+                      value={formik.values.username}
+                      onChange={formik.handleChange}
+                      onBlur={formik.handleBlur}
+                      error={formik.touched.username && Boolean(formik.errors.username)}
+                      helperText={formik.touched.username && formik.errors.username}
+                    />
+
+                    <TextField
+                      id="password"
+                      name="password"
+                      label="Password"
+                      fullWidth
+                      required
+                      value={formik.values.password}
+                      onChange={formik.handleChange}
+                      onBlur={formik.handleBlur}
+                      error={formik.touched.password && Boolean(formik.errors.password)}
+                      helperText={formik.touched.password && formik.errors.password}
+                    />
+
+                    {error && <p className="error">{error}</p>}
+                    
+                </CardContent>
+                <CardActions className={classes.cardActions}>
+                  <Button
+                    type="submit"
+                    color="primary"
+                    variant="contained"
+                    fullWidth
+                    disabled={auth.isLoading || !formik.isValid}
+                  >
+                  Sign up now
+                  </Button>
+                    <div>
+                      Have an account?{' '}
+                      <Link className="bold" to="/login">
+                        Log In
+                      </Link>
+                    </div>
+                </CardActions>
+              </form>
+            </Box>
+          </Card>
+        </Box>
+      </Grid>
+    </Layout>
   );
 };
 
@@ -112,4 +123,4 @@ const mapStateToProps = (state) => ({
   register: state.register,
 });
 
-export default compose(withRouter, connect(mapStateToProps, { registerUserWithEmail }))(Register);
+export default compose(withRouter, connect(mapStateToProps, { registerUserWithEmail }))(withStyles(styles)(Register));

@@ -4,10 +4,12 @@ import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import { createStore, applyMiddleware, compose } from 'redux';
 import thunk from 'redux-thunk';
+import {ThemeProvider} from '@material-ui/core'
 
 import App from './App';
-import './index.css';
+import './App.scss';
 import rootReducer from './store/reducers';
+import theme from "./theme/theme"
 
 const initialState = {};
 
@@ -24,11 +26,13 @@ const store = createStore(
 
 ReactDOM.render(
   <Provider store={store}>
+  <ThemeProvider theme={theme}>
     <Router>
       <Switch>
         <Route path="/" component={App} />
       </Switch>
     </Router>
+    </ThemeProvider>
   </Provider>,
   document.getElementById('root'),
 );

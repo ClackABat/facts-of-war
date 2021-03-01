@@ -5,6 +5,7 @@ import https from 'https';
 import { readFileSync } from 'fs';
 import { resolve, join } from 'path';
 import passport from 'passport';
+import cors from 'cors';
 import all_routes from 'express-list-endpoints';
 
 import routes from './routes';
@@ -16,10 +17,13 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// CORS middleware
+app.use(cors());
+
 app.use(passport.initialize());
 require('./services/jwtStrategy');
-require('./services/facebookStrategy');
-require('./services/googleStrategy');
+// require('./services/facebookStrategy');
+// require('./services/googleStrategy');
 require('./services/localStrategy');
 
 const isProduction = process.env.NODE_ENV === 'production';

@@ -36,45 +36,20 @@ const userSchema = new Schema(
       minlength: 6,
       maxlength: 60,
     },
-    name: String,
-    avatar: String,
     role: { type: String, default: 'USER' },
     bio: String,
-    // google
-    googleId: {
-      type: String,
-      unique: true,
-      sparse: true,
-    },
-    // fb
-    facebookId: {
-      type: String,
-      unique: true,
-      sparse: true,
-    },
     messages: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Message' }],
   },
   { timestamps: true },
 );
 
-console.log(join(__dirname, '../..', process.env.IMAGES_FOLDER_PATH));
-
 userSchema.methods.toJSON = function () {
-  // if not exists avatar1 default
-  const absoluteAvatarFilePath = `${join(__dirname, '../..', process.env.IMAGES_FOLDER_PATH)}${this.avatar}`;
-  const avatar = isValidUrl(this.avatar)
-    ? this.avatar
-    : fs.existsSync(absoluteAvatarFilePath)
-    ? `${process.env.IMAGES_FOLDER_PATH}${this.avatar}`
-    : `${process.env.IMAGES_FOLDER_PATH}avatar2.jpg`;
 
   return {
     id: this._id,
     provider: this.provider,
     email: this.email,
     username: this.username,
-    avatar: avatar,
-    name: this.name,
     role: this.role,
     createdAt: this.createdAt,
     updatedAt: this.updatedAt,
@@ -122,30 +97,18 @@ userSchema.methods.comparePassword = function (candidatePassword, callback) {
 export async function hashPassword(password) {
   const saltRounds = 10;
 
-  const hashedPassword = await new Promise((resolve, reject) => {
-    bcrypt.hash(password, saltRounds, function (err, hash) {
-      if (err) reject(err);
-      else resolve(hash);
-    });
-  });
-
-  return hashedPassword;
+  const salt = await bcrypt.genSalt(saltRounds);
+  const hash = await bcrypt.hash(password, salt);
+  
+  return hash;
+  //  bcrypt.genSalt(saltRounds, (err, salt) => {
+     
+  //   bcrypt.hash(password, salt, (errh, hash) => {
+  //     return hash;
+  //   })
+  // });
 }
 
-export const validateUser = (user) => {
-  const schema = {
-    avatar: Joi.any(),
-    name: Joi.string().min(2).max(30).required(),
-    username: Joi.string()
-      .min(2)
-      .max(20)
-      .regex(/^[a-zA-Z0-9_]+$/)
-      .required(),
-    password: Joi.string().min(6).max(20).allow('').allow(null),
-  };
-
-  return Joi.validate(user, schema);
-};
 
 const User = mongoose.model('User', userSchema);
 

@@ -2,7 +2,7 @@ import passport from 'passport';
 import { Strategy as PassportLocalStrategy } from 'passport-local';
 import Joi from 'joi';
 
-import User from '../models/User';
+import User, {hashPassword} from '../models/User';
 import { loginSchema } from './validators';
 
 const passportLogin = new PassportLocalStrategy(
@@ -23,8 +23,11 @@ const passportLogin = new PassportLocalStrategy(
       if (!user) {
         return done(null, false, { message: 'Email does not exists.' });
       }
+      console.log(password)
+      console.log(user.password)
 
       user.comparePassword(password, function (err, isMatch) {
+
         if (err) {
           return done(err);
         }

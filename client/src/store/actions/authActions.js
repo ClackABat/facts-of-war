@@ -39,8 +39,7 @@ export const loadMe = () => async (dispatch, getState) => {
 export const loginUserWithEmail = (formData, history) => async (dispatch, getState) => {
   dispatch({ type: LOGIN_WITH_EMAIL_LOADING });
   try {
-    const response = await axios.post('/auth/login', formData);
-
+    const response = await axios.post('https://localhost:5000/auth/login', formData);
     dispatch({
       type: LOGIN_WITH_EMAIL_SUCCESS,
       payload: { token: response.data.token, me: response.data.me },
